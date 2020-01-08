@@ -1,8 +1,15 @@
 package com.epam.izh.rd.online.service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 public class SimpleDateService implements DateService {
 
@@ -14,6 +21,9 @@ public class SimpleDateService implements DateService {
      */
     @Override
     public String parseDate(LocalDate localDate) {
+        if (localDate != null) {
+            return localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        }
         return null;
     }
 
@@ -25,7 +35,7 @@ public class SimpleDateService implements DateService {
      */
     @Override
     public LocalDateTime parseString(String string) {
-        return null;
+        return LocalDateTime.parse(string, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     /**
@@ -37,6 +47,9 @@ public class SimpleDateService implements DateService {
      */
     @Override
     public String convertToCustomFormat(LocalDate localDate, DateTimeFormatter formatter) {
+        if (localDate != null && formatter != null) {
+            return localDate.format(formatter);
+        }
         return null;
     }
 
@@ -47,7 +60,11 @@ public class SimpleDateService implements DateService {
      */
     @Override
     public long getNextLeapYear() {
-        return 0;
+        LocalDate date = LocalDate.now();
+        while (!date.isLeapYear()) {
+            date = date.plusYears(1);
+        }
+        return date.getYear();
     }
 
     /**
@@ -57,8 +74,6 @@ public class SimpleDateService implements DateService {
      */
     @Override
     public long getSecondsInYear(int year) {
-        return 0;
+        return (ChronoUnit.DAYS.between(LocalDate.of(year, Month.JANUARY, 1), LocalDate.of(year, Month.DECEMBER, 31)) + 1) * 24 * 60 * 60;
     }
-
-
 }
